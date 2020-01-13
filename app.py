@@ -1,5 +1,3 @@
-import os
-
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
@@ -18,11 +16,9 @@ import matplotlib as mpl
 from matplotlib import pyplot as plt
 %matplotlib notebook
 
-
 from plotly.tools import mpl_to_plotly
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
-
 
 ### Load Data ###
 df100aux = pd.read_csv('Yelp100')
