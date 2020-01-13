@@ -14,7 +14,7 @@ from scipy import stats
 
 import matplotlib as mpl
 from matplotlib import pyplot as plt
-%matplotlib notebook
+#%matplotlib notebook
 
 from plotly.tools import mpl_to_plotly
 from plotly.subplots import make_subplots
