@@ -162,6 +162,7 @@ def R2_chart(data_frames,date_i = dt.datetime(2016,1,1),date_f= dt.datetime(2018
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+server = app.server
 
 mathjax = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML'
 app.scripts.append_script({ 'external_url' : mathjax })
