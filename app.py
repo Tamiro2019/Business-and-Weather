@@ -8,190 +8,223 @@ import numpy as np
 import datetime as dt
 from datetime import timedelta, date
 
-import gc
-import json
 from scipy import stats
 
 import matplotlib as mpl
 from matplotlib import pyplot as plt
-#%matplotlib notebook
 
 from plotly.tools import mpl_to_plotly
 from plotly.subplots import make_subplots
-import plotly.graph_objects as go
+
+from pandas.plotting import register_matplotlib_converters
+register_matplotlib_converters()
+
 
 ### Load Data ###
-df100aux = pd.read_csv('Yelp100')
-#print(df100.head())
+yb50 = pd.read_csv('yb50.csv')
+yb50 = yb50.loc[:, ~yb50.columns.str.contains('^Unnamed')]
+yb50.index.name = 'b_id'
+#print(yb50.head())
 
-ci100 = pd.read_csv('Yelp100_ci_count')
-#print(ci100.head())
+ts50 = pd.read_csv('ts50.csv')
+ts50.set_index('Date',inplace=True)
+ts50.index = pd.to_datetime(ts50.index)
+#print(ts50.head())
 
-dfw = pd.read_csv('Weather')
-#print(dfw.head())
+# Cut down long names
+replace_dict = dict({'Giant Eagle Market District':'Giant Eagle','Winghart\'s Burger & Whiskey Bar':'Winghart\'s',
+                     'Carnegie Mellon University':'Carnegie Mellon','iLoveKickboxing- Pittsburgh':'iLoveKickboxing',
+                    'Gaucho Parrilla Argentina':'Gaucho','Pittsburgh International Airport':'International Airport'})
 
-# Frame as datetime data frames
-ci100['Time'] = ci100.apply(lambda row: dt.datetime(row['year'], row['month'], row['day'],row['hour']), axis=1)
-ci100.drop(['year','month','day','hour'],axis=1,inplace=True)
-dfw['Time']= dfw.drop(['T','P','WS'],axis=1).apply(lambda row: dt.datetime(row['year'], row['month'], row['day'],row['hour']), axis=1)
-dfw.drop(['year','month','day','hour'],axis=1,inplace=True)
+yb50['name'] = yb50['name'].replace(replace_dict)      
 
-ci100 = ci100.set_index('Time')
-ci100 = ci100.resample('1D').sum()
-#print(ci100.head())
-dfw = dfw.set_index('Time')
-dfw['P'] = (1.0/100)*dfw['P'].apply(round,-2) # convert once to millimeters
-dfw = dfw.resample('1D').mean()
-#print(dfw.head())
-
-df100 = df100aux['name'].to_frame()
-#df100.head()
-#ci100.head()
-
-### cut down long names ###
-
-print(df100.head())
-for bname in df100['name']:
-    
-    if len(bname) > 32:
-        print(bname)
-        bname_new = bname.split(' ')[0]+' '+bname.split(' ')[1]
-        print(bname_new)
-        df100['name'] = df100['name'].replace(bname,bname_new)
-        
-        #df100[df100['name']==bname] = bname_new
-        
-
-### Graph Generators ### 
-
+# Useful dictionary for graphs: 
 Wdict = dict({'T': 'Temperature (\u00b0F)','P': 'Precipitation (in)','WS':'Wind Speed (mi/h)'})
 
+
+## Graph 1 Generator ##
 # Make time-trace/scatter plot
 
-def timetrace(data_frames,date_i = dt.datetime(2016,1,1),date_f= dt.datetime(2018,1,1), fq = 30, bidx = 2, WQ = 'T'):
+def timetrace(data_frame,date_i = dt.date(2016,1,1),date_f= dt.date(2018,1,1), fq = 30, bidx = 2, WQ = 'T'):
+    '''
+    Returns mpl plot for the chosen business, time frame, and sampling rate.
+    - The first subplot shows check-in count vs time.
+    - The second subplot shows the chosen weather indicator vs time. 
     
-    Freq = str(fq)+'D'
+    Inputs
+        - data_frame : time-indexed dataframe for business and weather.
+        - date_i : initial date / lower bound to plot
+        - date_f : final date / upper bound to plot
+        - fq : sampling frequency (in days) for time domain
+        - bidx : index of the business of interest
+        - WQ : weather quantity of interest, can be 'T' (temperature), 'P' (precipitation), or 'WS' (wind speed)
+        
+    '''
     
-    [ci100, dfw] = data_frames
+    df = data_frame
+    
+    Freq = str(fq)+'D' # make frequency string
     
     # Figure
-    fig0 , (ax1,ax2) = plt.subplots(2,1,figsize=(5.5,4),sharex=True)
+    fig0 , (ax1,ax2) = plt.subplots(2,1,figsize=(4.0,3.0),sharex=True) #figsize=(5.5,4)
 
-    xdata_B = pd.to_datetime(ci100.loc[date_i:date_f].resample(Freq).sum().index)#.values #.to_pydatetime()#.values
-    ydata_B = ci100.loc[date_i:date_f].resample(Freq).sum()[str(bidx)]
+    # pick up data
+    xdata = pd.to_datetime(df.loc[date_i:date_f].resample(Freq).sum().index)
     
-    ax1.plot(xdata_B,ydata_B);
+    ydata_B = df.loc[date_i:date_f].resample(Freq).sum()[str(bidx)]
+    ydata_W = df.loc[date_i:date_f].resample(Freq).mean()[WQ]
+    
+    # make plot
+    ax1.plot(xdata,ydata_B, color='tab:blue')
+    ax2.plot(xdata,ydata_W, color='tab:green')
+    
+    # make plot nice
     ax1.xaxis.set_visible(False)
     ax1.xaxis.set_ticklabels([])
-    
-    xdata_T = pd.to_datetime(dfw.loc[date_i:date_f].resample(Freq).mean().index)#.values
-    ydata_T = dfw.loc[date_i:date_f].resample(Freq).mean()[WQ]
-    ax2.plot(xdata_T,ydata_T,color='tab:green');
 
     ax1.set_title('Check-in Count',fontsize= '15',fontweight="bold",y=0.86)
     ax2.set_title(Wdict[WQ],fontsize= '15',fontweight="bold",y=0.86)
 
     ax1.grid(b=True)
     ax2.grid(b=True)
-    
-    ax1.yaxis.set_ticks(np.arange(round(ydata_B.min(),-1),round(ydata_B.max(),-1)+ 10,5))
-    ax2.yaxis.set_ticks(np.arange(round(ydata_T.min(),-1),round(ydata_T.max(),-1)+20,20))
+       
     ax1.tick_params(axis="x", labelsize=12)
     ax2.tick_params(axis="x", labelsize=12)
     
     fig0.tight_layout(pad=3.0)
     
+    # return mpl subplots
     return fig0
 
-# Make Scatter Plot
 
-def BW_scatter(data_frames,date_i = dt.datetime(2016,1,1),date_f= dt.datetime(2018,1,1), fq = 30, bidx = 2, WQ = 'T'):
-    
-    Freq = str(fq)+'D'
-    [ci100, dfw] = data_frames
-    
-    fig1 = plt.figure(figsize=(5.5,4))
+## Graph 2 Generator ##
+# Make scatter plot
 
-    ydata_B = ci100.loc[date_i:date_f].resample(Freq).sum()[str(bidx)]
-    ydata_T = dfw.loc[date_i:date_f].resample(Freq).mean()[WQ]
+def BW_scatter(data_frame,date_i = dt.date(2016,1,1),date_f= dt.date(2018,1,1), fq = 30, bidx = 0, WQ = 'T'):
+    '''
+    Returns mpl scatter plot of check-in count vs weather indicator for a chosen business, time frame, and sampling rate.
     
-    m, b, r_value, p_value, std_err = stats.linregress(ydata_T,ydata_B)
+    Inputs
+        - data_frame : time-indexed dataframe for business and weather.
+        - date_i : initial date / lower bound to plot
+        - date_f : final date / upper bound to plot
+        - fq : sampling frequency (in days) for time domain
+        - bidx : index of the business of interest
+        - WQ : weather quantity of interest, can be 'T' (temperature), 'P' (precipitation), or 'WS' (wind speed)
+    '''
+    
+    df = data_frame
+    
+    Freq = str(fq)+'D' # make frequency string
+    
+    # Figure
+    fig1 = plt.figure(figsize=(3.8,2.8)) #,figsize=(5.5,4)
 
-    plt.scatter(ydata_T,ydata_B);
-    plt.plot(ydata_T,m*ydata_T+b, '-r');
+    ydata_B = df.loc[date_i:date_f].resample(Freq).sum()[str(bidx)]
+    ydata_W = df.loc[date_i:date_f].resample(Freq).mean()[WQ]
+    
+    # linear regression 
+    m, b, r_value, p_value, std_err = stats.linregress(ydata_W,ydata_B)
+
+    # make scatter plot
+    plt.scatter(ydata_W,ydata_B)
+    plt.plot(ydata_W,m*ydata_W+b, '-r')
+    
+    # make plot nice
     plt.xlabel(Wdict[WQ],fontsize= '13',fontweight="bold")
     plt.ylabel('Check-in Count',fontsize= '13',fontweight="bold")
-    plt.title('$\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad R^2 =' + str(np.round(r_value**2,2))+'$');
+    
+    plt.title('$'+'\quad'*10 +' R^2 =' + str(np.round(r_value**2,2))+'$');
 
     plt.grid(b=True)
     plt.gca().tick_params(axis="x", labelsize=12)
     plt.gca().tick_params(axis="y", labelsize=12)
-
-    return fig1
     
+    # return mpl scatter plot
+    return fig1
+
+
+## Graph 3 Generator ##
 
 # Make Weather Sensitivity Bar Chart
 
-def R2_chart(data_frames,date_i = dt.datetime(2016,1,1),date_f= dt.datetime(2018,1,1), fq = 30, bidx = 2, WQ = 'T'):
+def R2_chart(data_frames,date_i = dt.date(2016,1,1),date_f= dt.date(2018,1,1), fq = 30, bidx = 0, WQ = 'T'):
+    '''
+    Returns bar plot of R^2 values across different businesses. 
     
-    Freq = str(fq)+'D'
-    [df100,ci100, dfw] = data_frames
+    Inputs
+        - data_frame : time-indexed dataframe for business and weather.
+        - date_i : initial date / lower bound to plot
+        - date_f : final date / upper bound to plot
+        - fq : sampling frequency (in days) for time domain
+        - bidx : index of the business of interest
+        - WQ : weather quantity of interest, can be 'T' (temperature), 'P' (precipitation), or 'WS' (wind speed)
+    '''
     
-    ydata_T = dfw.loc[date_i:date_f].resample(Freq).mean()[WQ]
-
-    R2 = []
+    [yb50x,ts50x] = data_frames
+    
+    Freq = str(fq)+'D' # make frequency string
+    
+    ydata_W = ts50x.loc[date_i:date_f].resample(Freq).mean()[WQ]
+    ydata_B = ts50x.loc[date_i:date_f].resample(Freq).sum() #[str(i)]
+    
+    # Loop over all businesses, get the regression R^2 and store the business name and R^2 value in the lists:
     Bname = []
+    R2 = []
 
-    for i in range(100):
-
-        ydata_B = ci100.loc[date_i:date_f].resample(Freq).sum()[str(i)]
-        m, b, r_value, p_value, std_err = stats.linregress(ydata_T,ydata_B)
-        R2.append(r_value**2)
-        Bname.append(df100.loc[i,'name']+'  ')
+    for i in range(50):
+        m, b, r_value, p_value, std_err = stats.linregress(ydata_W, ydata_B[str(i)])
+        R2.append(r_value*r_value)
+        Bname.append(yb50x.loc[i,'name'] + '  ')
         
+    # Get index array which sorts the lists according to R^2
     idx = np.argsort(R2)[::-1]
-
+    
+    # Set the colors, and choose a special color for the business selected in the timetrace and scatter plots.
     colors = ['royalblue',]*len(np.array(R2)[idx]) #'cornflowerblue'
     colors[list(idx).index(bidx)] = 'darkorange'
     
-    return [{'x': np.array(R2)[idx],'y':np.array(Bname)[idx], 'type': 'bar','orientation':'h', 'marker': { 'color':colors }}] #fig2  
+    # return dictionary for plotly graph
+    return [{'x': np.array(R2)[idx],'y':np.array(Bname)[idx], 'type': 'bar','orientation':'h', 'marker': { 'color':colors }}] 
+
+
+## Some useful object to use in dash below ##
+
+# get business name series for dropdown list
+business_names = yb50['name']
+
+# define function to get correct marks for the slider object
+def get_marks(f):
+    
+    sampling = '182D' # sampling for slider object
+    fsamp = f.resample(sampling).sum()
+    dates = {}
+    
+    for z in fsamp.index:
+        dates[f.index.get_loc(z)] = str(z.strftime('%Y-%m')) 
+        
+    return dates
 
 
 ### Dash it out ###
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
+# setup dash object and link server
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
 
+# setup mathjax to interpret Tex 
 mathjax = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML'
 app.scripts.append_script({ 'external_url' : mathjax })
 
-business_names = df100['name']
-
-epoch = dt.datetime.utcfromtimestamp(0)
-
-#def unix_time_millis(dt):
-#    return (dt - epoch).total_seconds() * 1000.0
-
-def get_marks(f):
-    
-    sampling = '180D'
-    fsamp=f.resample(sampling).sum()
-    dates = {}
-    
-    for z in fsamp.index:
-        #dates[f.resample(sampling).sum().index.get_loc(z)] = j
-        dates[f.index.get_loc(z)] = str(z.strftime('%Y-%m')) #+ "-" + str(z.day)
-        
-    return dates
-    
+## Design page layout ##    
 app.layout = html.Div([
   
     # Page 1
     html.Div([
         
-        # Row 1
+        # Row 1 : Header
         html.Div([
 
             html.Div([      
@@ -208,7 +241,7 @@ app.layout = html.Div([
         
          html.Br([]),
         
-        # Row 2
+        # Row 2 : Paragraphs
         html.Div([
             html.P("Data science is gaining a prominent role in the world of business and investment. \
                     Data-driven, evidence-based analyses of available information have become crucial \
@@ -253,20 +286,19 @@ app.layout = html.Div([
             must be considered; sensitivity to weather conditions could be an important piece of the puzzle. ", style = dict(fontSize = '16') )
         ], className = "row" ),
         
-        ## Row 2.5
+        ## Row 2.5 : Hidden and used for debugging
         html.Div([
             dcc.Textarea(id='my-id', value='initial value'),
         ],style={'display': 'none'}),
-        #html.Br([]),
         
-        # Row 3
+        # Row 3 : Dropdowns to select business and weather indicator
         html.Div([
             html.Div([
                 html.H6(["Select Business"], className = "gs-header gs-table-header padded",style=dict(fontSize = '20')),
                 dcc.Dropdown(
                     id = 'b-drop',
                     options=[{'label': i, 'value': i} for i in business_names],
-                    value=business_names[2])
+                    value=business_names[0])
             ], className = "six columns" ), 
 
             
@@ -284,45 +316,41 @@ app.layout = html.Div([
         
         html.Br([]),
          
-        # Row 4
+        # Row 4 : Timetrace and Scatter plots
         html.Div([
             html.Div([
                 dcc.Graph(
                     id='timetrace',
-                    #figure= timetrace([ci100,dfw])#,#mpl_to_plotly(timetrace([ci100,dfw])),
-                    #figure= mpl_to_plotly(timetrace([ci100,dfw]))
-                    figure =mpl_to_plotly(timetrace([ci100,dfw])).update_layout(xaxis=dict(showticklabels=False),template="simple_white")
-                    #layout=dict(title=column, xaxis=dict(type='date'))
-                    #style = {'width': '10%'}
-                    #xaxis=dict(type='date')
-                )
-            ], className = "six columns"), #,, style={'width': '45%','padding-right':'55%'}
+                    figure =mpl_to_plotly(timetrace(ts50)).update_layout(xaxis=dict(showticklabels=False),template="simple_white")
+                , style = dict({'width': '100%'}))
+            ], className = "six columns"), 
             
             html.Div([
                 dcc.Graph(
                     id='scatter',
-                    figure= mpl_to_plotly(BW_scatter([ci100,dfw])).update_layout(template="simple_white")
-                )
+                    figure= mpl_to_plotly(BW_scatter(ts50)).update_layout(template="simple_white",autosize=True) 
+                ,style = dict({'width': '100%'}))
             ], className = "six columns"),
         
         ], className = "row" ),
         
+        # Row 4.5 - Loading Component
         html.Br([]),
-        dcc.Loading(id="loading", children=[html.Div(id="output-1")], type="default"),#html.Div(dcc.Graph(id='timetrace1'))
+        dcc.Loading(id="loading", children=[html.Div(id="output-1")], type="default"),
         html.Br([]),
         
-        # Row 5
+        # Row 5 : date range slider
         html.Div([
             html.Div([
                 dcc.RangeSlider(
                     id='range-slider',
                     updatemode='mouseup',
                     min=0,
-                    max=len(ci100.index) - 1,
+                    max=len(ts50.index) - 1,
                     count=1,
                     #step=3,
-                    value=[1*(len(ci100.index) - 1)//6, 5*(len(ci100.index) - 1)//6],#[0, len(ci100.index) - 1],
-                    marks=get_marks(ci100),
+                    value=[1*(len(ts50.index) - 1)//5, 4*(len(ts50.index) - 1)//5],#[0, len(ci100.index) - 1],
+                    marks=get_marks(ts50),
                 )
             ],className = "ten columns", style={'width': '96%', 'padding-left':'3%', 'padding-right':'1%'}) #,style={'textAlign': 'center'}
             
@@ -332,12 +360,11 @@ app.layout = html.Div([
         html.Br([]),
         html.Br([]),
         
-        
-        # Row 6
+        # Row 6 :  Input box for date sampling frequency
         html.Div([
             html.Div([
                 html.H5(["Sampling Frequency (in days) = "], className = "gs-header seven columns gs-table-header padded", style={'text-align': 'center'})
-            ]), #, style=dict(color='#7F90AC') #,className = "four columns" ,style=dict(fontSize = '12')
+            ]), 
             html.Div([
                 dcc.Input(
                     id = 'sampling',
@@ -347,37 +374,36 @@ app.layout = html.Div([
                     min = 1,
                     max = 365
                     )  
-            ]) #,className = "two columns"
-        ], className = "row", style=dict({'padding-left':'16%','verticalAlign': 'middle'})), #, ,style=dict({float: 'right'}
+            ]) 
+        ], className = "row", style=dict({'padding-left':'16%','verticalAlign': 'middle'})), 
         
         html.Br([]),
         html.Br([]),
         
-        # Row 7
+        # Row 7: Plot bar plot for R^2 across businesses
         html.Div([
             html.H5(['$$\\textbf{Business }\mathbf{R^2} \\textbf{ Distribution}$$'], className = "gs-header gs-table-header padded"),
             dcc.Graph(id='R-squared',
                             figure={
-                                'data': R2_chart([df100,ci100,dfw]),
+                                'data': R2_chart([yb50,ts50]),
                                 'layout': {
-                                    "height": 2000,  # px
-                                    #"title": dict(text='$\\textbf{Business }\mathbf{R^2} \\textbf{ Distribution}$',xanchor= 'left', yanchor= 'top', y=3.0), #$R^2$ ,y=2.0
-                                    #"titlefont": {'size':20}, # not working with latex
-                                    "xaxis":dict(mirror = "allticks", side= 'top',automargin=True), #mirror='allticks'
+                                    "height": 1000,  # px
+                                    "xaxis":dict(side= 'top'), 
                                     "yaxis":dict(autorange="reversed"),
-                                    "margin": dict(t=20, b= 20, l=370)
+                                    "margin": dict(t=20, b= 20, l=300),
                                 }
                             }           
                       
-                   )], className = "row",style={"border":"2px black solid"} ) #,'text-align':'left'
-        
-        
+                   )], className = "row",style={"border":"2px black solid"} ) 
         
     ], className = "page" )
     
 ])
 
-@app.callback( #Output(component_id='R-squared', component_property='figure')
+## Structure Callbacks (for interactive use of app) ##    
+
+# Update all plots upon interaction
+@app.callback(
     [Output(component_id='my-id', component_property='value'),
     Output(component_id='timetrace', component_property='figure'),
     Output(component_id='scatter', component_property='figure'),
@@ -387,27 +413,32 @@ app.layout = html.Div([
     Input(component_id='range-slider', component_property='value'),
     Input(component_id='sampling', component_property='value')])
 def update_plots(b_val,w_val,rng_vals,s_val):
-    #(data_frames,date_i = dt.datetime(2015,7,1),date_f=... , fq = 7, bidx = 0, WQ = 'T')
-    t1 = (ci100.index[rng_vals[0]].to_pydatetime())#.date())#.to_pydatetime()
-    t2 = (ci100.index[rng_vals[1]].to_pydatetime())#.date())#.to_pydatetime()
-    b_idx = df100[df100['name'] == b_val].index[0]
-    #date_i=t1,date_f=t2,
-    fig_t = mpl_to_plotly(timetrace([ci100,dfw],date_i=t1,date_f=t2, fq = s_val, bidx = b_idx, WQ = w_val)).update_layout(xaxis=dict(showticklabels=False),template="simple_white")         
-    fig_s = mpl_to_plotly(BW_scatter([ci100,dfw],date_i=t1,date_f=t2, fq = s_val, bidx = b_idx, WQ = w_val)).update_layout(template="simple_white")
+    
+    # Get initial and final times from input rng_vals
+    t1 = (ts50.index[rng_vals[0]].to_pydatetime())
+    t2 = (ts50.index[rng_vals[1]].to_pydatetime())
+    
+    # Get business id from b_val
+    b_idx = yb50[yb50['name'] == b_val].index[0]
+    
+    # Get new figure objects
+    fig_t = mpl_to_plotly(timetrace(ts50,date_i=t1,date_f=t2, fq = s_val, bidx = b_idx, WQ = w_val)).update_layout(xaxis=dict(showticklabels=False),template="simple_white")         
+    fig_s = mpl_to_plotly(BW_scatter(ts50,date_i=t1,date_f=t2, fq = s_val, bidx = b_idx, WQ = w_val)).update_layout(template="simple_white")
     fig_r = {
-                'data': R2_chart([df100,ci100,dfw], date_i=t1,date_f=t2, fq = s_val, bidx = b_idx, WQ = w_val),
+                'data': R2_chart([yb50,ts50], date_i=t1,date_f=t2, fq = s_val, bidx = b_idx, WQ = w_val),
                 'layout': {
-                    "height": 2000,  # px
-                    "xaxis":dict(mirror = "allticks", side= 'top',automargin=True), #mirror='allticks'
+                    "height": 1000, 
+                    "xaxis":dict(mirror = "allticks", side= 'top',automargin=True), 
                     "yaxis":dict(autorange="reversed"),
-                    "margin": dict(t=20, b= 20, l=370)
+                    "margin": dict(t=20, b= 20, l=300)
                 }
             } 
     
-    return 'You\'ve entered {},{},{},{} and'.format(b_val,w_val,rng_vals,s_val),fig_t,fig_s,fig_r
+    # Return objects to callback outputs [note: first object returns info to the debug div - Row 2.5 above]
+    return 'You\'ve entered {},{},{},{} and'.format(b_val,w_val,rng_vals,s_val), fig_t, fig_s, fig_r
 
-
-@app.callback(Output('output-1' , "children"), #'output-1' 
+# Show loading spinner while waiting for plots to update
+@app.callback(Output('output-1' , "children"),
     [Input(component_id='b-drop', component_property='value'),
     Input(component_id='w-drop', component_property='value'),
     Input(component_id='range-slider', component_property='value'),
@@ -416,8 +447,7 @@ def input_triggers_spinner(value):
     time.sleep(1)
     return value          
 
-
-
+# add external css and js templates
 external_css = [ "https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css",
         "https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css",
         "//fonts.googleapis.com/css?family=Raleway:400,300,600",
@@ -432,6 +462,10 @@ external_js = [ "https://code.jquery.com/jquery-3.2.1.min.js",
     
 for js in external_js: 
     app.scripts.append_script({ "external_url": js })
+
+# configure css and scripts for deployment
+app.css.config.serve_locally = False
+app.scripts.config.serve_locally = False
 
 if __name__ == '__main__':
     app.run_server(debug=False)
