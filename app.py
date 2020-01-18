@@ -33,7 +33,7 @@ ts50.index = pd.to_datetime(ts50.index)
 #print(ts50.head())
 
 # Cut down long names
-replace_dict = dict({'Giant Eagle Market District':'Giant Eagle','Winghart\'s Burger & Whiskey Bar':'Winghart\'s',
+replace_dict = dict({'Giant Eagle Market District':'Giant Eagle Market Dist','Winghart\'s Burger & Whiskey Bar':'Winghart\'s',
                      'Carnegie Mellon University':'Carnegie Mellon','iLoveKickboxing- Pittsburgh':'iLoveKickboxing',
                     'Gaucho Parrilla Argentina':'Gaucho','Pittsburgh International Airport':'International Airport'})
 
