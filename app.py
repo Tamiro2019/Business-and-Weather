@@ -97,7 +97,7 @@ def timetrace(data_frame,date_i = dt.date(2016,1,1),date_f= dt.date(2018,1,1), f
     plotly_obj = mpl_to_plotly(fig0)
     plotly_obj.data[0]['x'] = [ dates.num2date(x, tz=None).date() for x in list(plotly_obj.data[0]['x'])]
     plotly_obj.data[1]['x'] = [ dates.num2date(x, tz=None).date() for x in list(plotly_obj.data[1]['x'])]
-    plotly_obj.update_layout(margin = dict(t=25),autosize= True,xaxis=dict(type='date',showticklabels=False,range=None),xaxis2=dict(type='date',range=None),template="simple_white") #margin = dict(t=20),
+    plotly_obj.update_layout(margin = dict(t=25,b=10),autosize= True,xaxis=dict(type='date',showticklabels=False,range=None),xaxis2=dict(type='date',range=None),template="simple_white") #margin = dict(t=20),
    
     # return mpl subplots
     return plotly_obj #fig0
@@ -146,7 +146,7 @@ def BW_scatter(data_frame,date_i = dt.date(2016,1,1),date_f= dt.date(2018,1,1), 
     plt.gca().tick_params(axis="x", labelsize=12)
     plt.gca().tick_params(axis="y", labelsize=12)
     
-    plotly_obj = mpl_to_plotly(fig1).update_layout(margin = dict(t=25),template="simple_white",autosize=True) #
+    plotly_obj = mpl_to_plotly(fig1).update_layout(margin = dict(t=25,b=10),template="simple_white",autosize=True) #
     # return mpl scatter plot
     return plotly_obj #fig1
 
@@ -306,7 +306,7 @@ app.layout = html.Div([
                     id = 'b-drop',
                     options=[{'label': i, 'value': i} for i in business_names],
                     value=business_names[0])
-            ], className = "six columns" ), 
+            ], className = "six columns padded" ), 
 
             
             
@@ -317,7 +317,7 @@ app.layout = html.Div([
                     options=[{'label': 'Temperature (\u00b0F)', 'value': 'T'},{'label': 'Precipitation (in)', 'value': 'P'},{'label': 'Wind Speed (mi/h)', 'value': 'WS'}],
                     value='T') 
 
-             ], className = "six columns"),  
+             ], className = "six columns padded"),  
                       
         ], className = "row padded" ),
         
@@ -380,6 +380,7 @@ app.layout = html.Div([
                     placeholder='Frequency',
                     type='number',
                     value=30,
+                    debounce = True,
                     min = 1,
                     max = 365
                     )  
@@ -401,7 +402,7 @@ app.layout = html.Div([
                                     "height": 1000,  # px
                                     "xaxis":dict(side= 'top'), 
                                     "yaxis":dict(autorange="reversed"),
-                                    "margin": dict(t=20, b= 20, l=300),
+                                    "margin": dict(t=20, b= 20, l=270),
                                 }
                             }           
                       
@@ -441,7 +442,7 @@ def update_plots(b_val,w_val,rng_vals,s_val):
                     "height": 1000, 
                     "xaxis":dict(mirror = "allticks", side= 'top',automargin=True), 
                     "yaxis":dict(autorange="reversed"),
-                    "margin": dict(t=20, b= 20, l=300)
+                    "margin": dict(t=20, b= 20, l=270)
                 }
             } 
     
