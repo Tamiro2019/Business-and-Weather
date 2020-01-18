@@ -389,7 +389,9 @@ app.layout = html.Div([
         
         # Row 7: Plot bar plot for R^2 across businesses
         html.Div([
-            html.H5(['$$\\textbf{Business }\mathbf{R^2} \\textbf{ Distribution}$$'], className = "gs-header gs-table-header padded"),
+            html.H5(['Business R',
+                     html.Sup([2]), 
+                     ' Distribution'], className = "gs-header gs-table-header padded", style = {'textAlign': 'center','fontWeight':'bold'}),
             dcc.Graph(id='R-squared',
                             figure={
                                 'data': R2_chart([yb50,ts50]),
