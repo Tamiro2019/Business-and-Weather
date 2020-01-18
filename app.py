@@ -94,12 +94,12 @@ def timetrace(data_frame,date_i = dt.date(2016,1,1),date_f= dt.date(2018,1,1), f
     
     fig0.tight_layout(pad=3.0)
     
-    plt.xticks(rotation=45)
+    #plt.xticks(rotation=45)
     
     plotly_obj = mpl_to_plotly(fig0)
     plotly_obj.data[0]['x'] = [ dates.num2date(x, tz=None).date() for x in list(plotly_obj.data[0]['x'])]
     plotly_obj.data[1]['x'] = [ dates.num2date(x, tz=None).date() for x in list(plotly_obj.data[1]['x'])]
-    plotly_obj.update_layout(margin = dict(t=25,b=10),autosize= True,xaxis=dict(type='date',showticklabels=False,range=None),xaxis2=dict(type='date',range=None),template="simple_white") #margin = dict(t=20),
+    plotly_obj.update_layout(margin = dict(t=25,b=10),autosize= True,xaxis=dict(type='date',showticklabels=False,range=None),xaxis2=dict(type='date',range=None,tickangle = 35),template="simple_white") #margin = dict(t=20),
    
     # return mpl subplots
     return plotly_obj #fig0
@@ -126,7 +126,7 @@ def BW_scatter(data_frame,date_i = dt.date(2016,1,1),date_f= dt.date(2018,1,1), 
     Freq = str(fq)+'D' # make frequency string
     
     # Figure
-    fig1 = plt.figure(figsize=(3.8,2.8)) #,figsize=(5.5,4)
+    fig1 = plt.figure(figsize=(3.8,3.0)) #,figsize=(5.5,4)
 
     ydata_B = df.loc[date_i:date_f].resample(Freq).sum()[str(bidx)]
     ydata_W = df.loc[date_i:date_f].resample(Freq).mean()[WQ]
@@ -308,7 +308,7 @@ app.layout = html.Div([
                     id = 'b-drop',
                     options=[{'label': i, 'value': i} for i in business_names],
                     value=business_names[0])
-            ], className = "six columns padded" ), 
+            ], className = "six columns",style={'padding-left':'3%', 'padding-right':'1%'} ), 
 
             
             
@@ -319,7 +319,7 @@ app.layout = html.Div([
                     options=[{'label': 'Temperature (\u00b0F)', 'value': 'T'},{'label': 'Precipitation (in)', 'value': 'P'},{'label': 'Wind Speed (mi/h)', 'value': 'WS'}],
                     value='T') 
 
-             ], className = "six columns"),  
+             ], className = "six columns",style={'padding-left':'5%'}),  
                       
         ], className = "row padded" ),
         
