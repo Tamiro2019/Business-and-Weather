@@ -97,7 +97,7 @@ def timetrace(data_frame,date_i = dt.date(2016,1,1),date_f= dt.date(2018,1,1), f
     plotly_obj = mpl_to_plotly(fig0)
     plotly_obj.data[0]['x'] = [ dates.num2date(x, tz=None).date() for x in list(plotly_obj.data[0]['x'])]
     plotly_obj.data[1]['x'] = [ dates.num2date(x, tz=None).date() for x in list(plotly_obj.data[1]['x'])]
-    plotly_obj.update_layout(margin = dict(t=20),autosize= True,xaxis=dict(type='date',showticklabels=False,range=None),xaxis2=dict(type='date',range=None),template="simple_white")
+    plotly_obj.update_layout(autosize= True,xaxis=dict(type='date',showticklabels=False,range=None),xaxis2=dict(type='date',range=None),template="simple_white") #margin = dict(t=20),
    
     # return mpl subplots
     return plotly_obj #fig0
@@ -146,7 +146,7 @@ def BW_scatter(data_frame,date_i = dt.date(2016,1,1),date_f= dt.date(2018,1,1), 
     plt.gca().tick_params(axis="x", labelsize=12)
     plt.gca().tick_params(axis="y", labelsize=12)
     
-    plotly_obj = mpl_to_plotly(fig1).update_layout(margin = dict(t=20),template="simple_white",autosize=True)
+    plotly_obj = mpl_to_plotly(fig1).update_layout(template="simple_white",autosize=True) #margin = dict(t=20),
     # return mpl scatter plot
     return plotly_obj #fig1
 
