@@ -97,7 +97,7 @@ def timetrace(data_frame,date_i = dt.date(2016,1,1),date_f= dt.date(2018,1,1), f
     plotly_obj = mpl_to_plotly(fig0)
     plotly_obj.data[0]['x'] = [ dates.num2date(x, tz=None).date() for x in list(plotly_obj.data[0]['x'])]
     plotly_obj.data[1]['x'] = [ dates.num2date(x, tz=None).date() for x in list(plotly_obj.data[1]['x'])]
-    plotly_obj.update_layout(autosize= True,xaxis=dict(type='date',showticklabels=False,range=None),xaxis2=dict(type='date',range=None),template="simple_white")
+    plotly_obj.update_layout(margin = dict(t=20),autosize= True,xaxis=dict(type='date',showticklabels=False,range=None),xaxis2=dict(type='date',range=None),template="simple_white")
    
     # return mpl subplots
     return plotly_obj #fig0
@@ -146,8 +146,9 @@ def BW_scatter(data_frame,date_i = dt.date(2016,1,1),date_f= dt.date(2018,1,1), 
     plt.gca().tick_params(axis="x", labelsize=12)
     plt.gca().tick_params(axis="y", labelsize=12)
     
+    plotly_obj = mpl_to_plotly().update_layout(margin = dict(t=20),template="simple_white",autosize=True)
     # return mpl scatter plot
-    return fig1
+    return plotly_obj #fig1
 
 
 ## Graph 3 Generator ##
@@ -335,7 +336,7 @@ app.layout = html.Div([
             html.Div([
                 dcc.Graph(
                     id='scatter',
-                    figure= mpl_to_plotly(BW_scatter(ts50)).update_layout(template="simple_white",autosize=True) 
+                    figure=  BW_scatter(ts50),
                 ,style = dict({'width': '100%'}))
             ], className = "six columns"),
         dcc.Loading(id="loading", children=[html.Div(id="output-1")], type="default"),
@@ -432,8 +433,7 @@ def update_plots(b_val,w_val,rng_vals,s_val):
     
     # Get new figure objects
     fig_t = timetrace(ts50,date_i=t1,date_f=t2, fq = s_val, bidx = b_idx, WQ = w_val)
-    #mpl_to_plotly(timetrace(ts50,date_i=t1,date_f=t2, fq = s_val, bidx = b_idx, WQ = w_val)).update_layout(xaxis=dict(showticklabels=False),template="simple_white")         
-    fig_s = mpl_to_plotly(BW_scatter(ts50,date_i=t1,date_f=t2, fq = s_val, bidx = b_idx, WQ = w_val)).update_layout(template="simple_white")
+    fig_s = BW_scatter(ts50,date_i=t1,date_f=t2, fq = s_val, bidx = b_idx, WQ = w_val)
     fig_r = {
                 'data': R2_chart([yb50,ts50], date_i=t1,date_f=t2, fq = s_val, bidx = b_idx, WQ = w_val),
                 'layout': {
