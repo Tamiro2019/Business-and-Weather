@@ -97,7 +97,7 @@ def timetrace(data_frame,date_i = dt.date(2016,1,1),date_f= dt.date(2018,1,1), f
     plotly_obj = mpl_to_plotly(fig0)
     plotly_obj.data[0]['x'] = [ dates.num2date(x, tz=None).date() for x in list(plotly_obj.data[0]['x'])]
     plotly_obj.data[1]['x'] = [ dates.num2date(x, tz=None).date() for x in list(plotly_obj.data[1]['x'])]
-    plotly_obj.update_layout(xaxis=dict(type='date',showticklabels=False,range=None),xaxis2=dict(type='date',range=None),template="simple_white")
+    plotly_obj.update_layout(autosize= True,xaxis=dict(type='date',showticklabels=False,range=None),xaxis2=dict(type='date',range=None),template="simple_white")
    
     # return mpl subplots
     return plotly_obj #fig0
