@@ -94,12 +94,10 @@ def timetrace(data_frame,date_i = dt.date(2016,1,1),date_f= dt.date(2018,1,1), f
     
     fig0.tight_layout(pad=3.0)
     
-    #plt.xticks(rotation=45)
-    
     plotly_obj = mpl_to_plotly(fig0)
     plotly_obj.data[0]['x'] = [ dates.num2date(x, tz=None).date() for x in list(plotly_obj.data[0]['x'])]
     plotly_obj.data[1]['x'] = [ dates.num2date(x, tz=None).date() for x in list(plotly_obj.data[1]['x'])]
-    plotly_obj.update_layout(margin = dict(t=25,b=10),autosize= True,xaxis=dict(type='date',showticklabels=False,range=None),xaxis2=dict(type='date',range=None,tickangle = 35),template="simple_white") #margin = dict(t=20),
+    plotly_obj.update_layout(margin = dict(t=25,b=10),autosize= True,xaxis=dict(type='date',showticklabels=False,range=None),xaxis2=dict(type='date',range=None,tickangle = 35),template="simple_white") 
    
     # return mpl subplots
     return plotly_obj #fig0
@@ -332,7 +330,6 @@ app.layout = html.Div([
                 dcc.Graph(
                     id='timetrace',
                     figure = timetrace(ts50)
-                    #mpl_to_plotly(timetrace(ts50)).update_layout(xaxis=dict(showticklabels=False),template="simple_white")
                 , style = dict({'width': '100%'}))
             ], className = "six columns"), 
             
@@ -360,10 +357,10 @@ app.layout = html.Div([
                     max=len(ts50.index) - 1,
                     count=1,
                     #step=3,
-                    value=[1*(len(ts50.index) - 1)//5, 4*(len(ts50.index) - 1)//5],#[0, len(ci100.index) - 1],
+                    value=[1*(len(ts50.index) - 1)//5, 4*(len(ts50.index) - 1)//5],
                     marks=get_marks(ts50),
                 )
-            ],className = "ten columns", style={'width': '96%', 'padding-left':'3%', 'padding-right':'1%'}) #,style={'textAlign': 'center'}
+            ],className = "ten columns", style={'width': '96%', 'padding-left':'3%', 'padding-right':'1%'}) 
             
         ], className = "row" ),
         
