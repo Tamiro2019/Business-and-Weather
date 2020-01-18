@@ -99,8 +99,8 @@ def timetrace(data_frame,date_i = dt.date(2016,1,1),date_f= dt.date(2018,1,1), f
     plotly_obj.data[1]['x'] = [ dates.num2date(x, tz=None).date() for x in list(plotly_obj.data[1]['x'])]
     plotly_obj.update_layout(margin = dict(t=25,b=10),autosize= True,xaxis=dict(type='date',showticklabels=False,range=None),xaxis2=dict(type='date',range=None,tickangle = 35),template="simple_white") 
    
-    # return mpl subplots
-    return plotly_obj #fig0
+    # return plotly subplots
+    return plotly_obj 
 
 
 ## Graph 2 Generator ##
@@ -147,8 +147,8 @@ def BW_scatter(data_frame,date_i = dt.date(2016,1,1),date_f= dt.date(2018,1,1), 
     plt.gca().tick_params(axis="y", labelsize=12)
     
     plotly_obj = mpl_to_plotly(fig1).update_layout(margin = dict(t=25,b=10),template="simple_white",autosize=True) #
-    # return mpl scatter plot
-    return plotly_obj #fig1
+    # return plotly scatter plot
+    return plotly_obj 
 
 
 ## Graph 3 Generator ##
@@ -336,10 +336,12 @@ app.layout = html.Div([
             html.Div([
                 dcc.Graph(
                     id='scatter',
-                    figure=  BW_scatter(ts50)
-                ,style = dict({'width': '100%'}))
+                    figure=  BW_scatter(ts50),
+                style = dict({'width': '100%'}))
             ], className = "six columns"),
+            
         dcc.Loading(id="loading", children=[html.Div(id="output-1")], type="default"),
+            
         ], className = "row" ),
         
         # Row 4.5 - Loading Component Space
