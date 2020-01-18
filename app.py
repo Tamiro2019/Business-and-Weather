@@ -336,7 +336,7 @@ app.layout = html.Div([
             html.Div([
                 dcc.Graph(
                     id='scatter',
-                    figure=  BW_scatter(ts50),
+                    figure=  BW_scatter(ts50)
                 ,style = dict({'width': '100%'}))
             ], className = "six columns"),
         dcc.Loading(id="loading", children=[html.Div(id="output-1")], type="default"),
