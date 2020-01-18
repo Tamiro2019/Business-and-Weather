@@ -146,7 +146,7 @@ def BW_scatter(data_frame,date_i = dt.date(2016,1,1),date_f= dt.date(2018,1,1), 
     plt.gca().tick_params(axis="x", labelsize=12)
     plt.gca().tick_params(axis="y", labelsize=12)
     
-    plotly_obj = mpl_to_plotly().update_layout(margin = dict(t=20),template="simple_white",autosize=True)
+    plotly_obj = mpl_to_plotly(fig1).update_layout(margin = dict(t=20),template="simple_white",autosize=True)
     # return mpl scatter plot
     return plotly_obj #fig1
 
