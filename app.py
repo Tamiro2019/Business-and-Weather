@@ -454,7 +454,7 @@ def update_plots(b_val,w_val,rng_vals,s_val):
     Input(component_id='range-slider', component_property='value'),
     Input(component_id='sampling', component_property='value')])
 def input_triggers_spinner(value):
-    time.sleep(1)
+    time.sleep(3)
     return value          
 
 # add external css and js templates
