@@ -338,12 +338,12 @@ app.layout = html.Div([
                     figure= mpl_to_plotly(BW_scatter(ts50)).update_layout(template="simple_white",autosize=True) 
                 ,style = dict({'width': '100%'}))
             ], className = "six columns"),
-        
+        dcc.Loading(id="loading", children=[html.Div(id="output-1")], type="default"),
         ], className = "row" ),
         
-        # Row 4.5 - Loading Component
+        # Row 4.5 - Loading Component Space
         html.Br([]),
-        dcc.Loading(id="loading", children=[html.Div(id="output-1")], type="default"),
+        html.Br([]),
         html.Br([]),
         
         # Row 5 : date range slider
