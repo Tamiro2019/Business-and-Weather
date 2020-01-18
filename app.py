@@ -291,7 +291,7 @@ app.layout = html.Div([
             Businesses with small weather correlations may also be attractive to investors who may\
             not want seasonal variations in portfolio performance. Of course in any decision, many different variables \
             must be considered; sensitivity to weather conditions could be an important piece of the puzzle. ", style = dict(fontSize = '16') )
-        ], className = "row" ),
+        ], className = "row padded" ),
         
         ## Row 2.5 : Hidden and used for debugging
         html.Div([
@@ -319,7 +319,7 @@ app.layout = html.Div([
 
              ], className = "six columns"),  
                       
-        ], className = "row" ),
+        ], className = "row padded" ),
         
         html.Br([]),
         html.Br([]),
