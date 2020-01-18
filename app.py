@@ -94,6 +94,8 @@ def timetrace(data_frame,date_i = dt.date(2016,1,1),date_f= dt.date(2018,1,1), f
     
     fig0.tight_layout(pad=3.0)
     
+    plt.xticks(rotation=45)
+    
     plotly_obj = mpl_to_plotly(fig0)
     plotly_obj.data[0]['x'] = [ dates.num2date(x, tz=None).date() for x in list(plotly_obj.data[0]['x'])]
     plotly_obj.data[1]['x'] = [ dates.num2date(x, tz=None).date() for x in list(plotly_obj.data[1]['x'])]
@@ -317,7 +319,7 @@ app.layout = html.Div([
                     options=[{'label': 'Temperature (\u00b0F)', 'value': 'T'},{'label': 'Precipitation (in)', 'value': 'P'},{'label': 'Wind Speed (mi/h)', 'value': 'WS'}],
                     value='T') 
 
-             ], className = "six columns padded"),  
+             ], className = "six columns"),  
                       
         ], className = "row padded" ),
         
