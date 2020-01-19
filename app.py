@@ -231,7 +231,7 @@ app.layout = html.Div([
     # Page 1
     html.Div([
         
-        # Row 1 : Header
+        #Header
         html.Div([
 
             html.Div([      
@@ -248,149 +248,224 @@ app.layout = html.Div([
         
          html.Br([]),
         
-        # Row 2 : Paragraphs
+        #Paragraphs
         html.Div([
             html.P("Data science is gaining a prominent role in the world of business and investment. \
-                    Data-driven, evidence-based analyses of available information have become crucial \
-                    for effective decision-making in uncertain and ever-evolving markets.", style = dict(fontSize = '16') ),
-            html.P("Particularly intriguing is the question of how we can use data to understand consumer behavior. \
-            Even though people are fantastically complicated and of diverse tastes and preferences, patterns begin \
-            to emerge when viewed through a proper lens.", style = dict(fontSize = '16') ),
-            html.P("To study consumer patterns, we need indicators that quantify an aspect of their behavior \
-            (e.g. purchases, click-through rates, or arrival times), and how that behavior changes in different \
-            circumstances (this could be anything like the time of year, or being exposed to a new ad campaign). \
-            In this project, we shall examine the impact of weather conditions on consumer's engagement with \
-            local businesses in Pittsburgh, Pennsylvania. To quantify engagement, we will use Yelp data on check-in \
-            events for 100 businesses in the region. To quantify circumstance, we use weather indicators such as\
-            temperature, precipitation or wind speed.", style = dict(fontSize = '16') ),
-            html.P(["Business and check-in data was retrieved from the ", html.A("Yelp Open Dataset", href='https://www.yelp.com/dataset', target="_blank") ,".\
-            Note: the data is used here for personal and educational purposes."], style = dict(fontSize = '16') ),
-            html.P(["Weather data from a land-based station in the Pittsburgh International Airport was obtained from the ",
-            html.A("National Centers for Environmental Information", href='https://www.ncdc.noaa.gov/data-access/', target="_blank"), "."], style = dict(fontSize = '16') ),
-            html.P(["Part of these data sets were cleaned and combined into a single dataframe for this project."], style = dict(fontSize = '16')),
-            html.P("The interactive app below is designed to look at check-in counts for each business and weather \
-            over any period of time between September 1, 2015 and August 30, 2018. The first graph (left) visualizes\
-            the respective time series. The second graph (right) shows a scatter plot of check-in count vs weather\
-            indicator, together with a best fit line to identify any trends. Feel free to use the drop menus to select\
-            any business and weather indicator of your choice. Below you will find a slider which narrows/expands the time\
-            window, if you wish to focus on a particular time frame. You can also set the sampling frequency to any number\
-            of days; the sampling frequency determines the smallest time scale within which the weather data is\
-            averaged and the check-in data is aggregated. For example, if sampling frequency is set to 7 days, then the\
-            check-in time series data is grouped in batches of 7 days, and so each data point in the graphs becomes total\
-            number of check-ins within a 7 day period.", style = dict(fontSize = '16') ),
-            html.P("The long figure at the bottom summarizes the correlation coefficients (R-squared) of all the businesses.\
-            These coefficients track the correlation between check-in count and weather over the specified period of time and\
-            sampling.  They serve as a measure of the sensitivity of a business to weather conditions. Remarkably, there is a\
-            broad range of correlation values, which indicates that there are businesses whose engagement (at least as\
-            measured by Yelp check-in data) is highly dependent on weather, while others are much less impacted. \
-            ", style = dict(fontSize = '16') ),
-            html.P("This information can help businesses and investors identify trends and make strategic decisions. \
-            For example, high weather correlations may prompt leaders of seasonal businesses to spend fewer \
-            resources during offseason, or one could have non-seasonal businesses with high weather correlations \
-            (maybe due to special ad campaigns ran every summer), which may reveal a need to improve engagement year-round.\
-            Businesses with small weather correlations may also be attractive to investors who may\
-            not want seasonal variations in portfolio performance. Of course in any decision, many different variables \
-            must be considered; sensitivity to weather conditions could be an important piece of the puzzle. ", style = dict(fontSize = '16') )
-        ], className = "row padded" ),
+                    Data-driven, evidence-based analysis has become crucial \
+                    for effective decision-making in uncertain and ever-evolving markets.",
+                   style = dict(fontSize = '16') ),
+            
+            html.P("Particularly intriguing is the question of how we can use data to understand \
+            consumer behavior. Even though people are fantastically complicated and of diverse tastes \
+            and preferences, patterns begin to emerge when viewed through a proper lens.", 
+                   style = dict(fontSize = '16') ),
+            
+            html.Div([
+                html.H6('The App',
+                        style=dict(opacity=0.80,backgroundColor= 'maroon',color='white',fontSize = '20'),
+                        className = "two columns")
+            ], className = "row",style={'padding-right':'10%'}),
+                
+            html.P("To study consumer patterns, I built a simple app which compares business engagement \
+            (as measured by check-in counts on Yelp) to different weather indicators (temperature, \
+            precipitation, and wind-speed) for 50 top businesses in Pittburgh, Pennsylvania.",
+                   style = dict(fontSize = '16') ),
+            
+            html.Div([
+                html.H6('The Data',
+                        style=dict(opacity=0.80,backgroundColor= 'maroon',color='white',fontSize = '20'),
+                        className = "two columns")
+            ], className = "row", style={'padding-right':'10%'}),
+            
+            html.P(["Business and check-in data was retrieved from the ", 
+                    html.A("Yelp Open Dataset", 
+                           href='https://www.yelp.com/dataset', 
+                           target="_blank") ,
+                    ". Note: the data is used here for personal and educational purposes."], 
+                    style = dict(fontSize = '16') ),
+            
+            html.P(["Weather data from a land-based station in the Pittsburgh International Airport\
+            was obtained from the ",
+            html.A("National Centers for Environmental Information", 
+                   href='https://www.ncdc.noaa.gov/data-access/',
+                   target="_blank"), "."], 
+                   style = dict(fontSize = '16') ),
+            
+            html.P(["A portion of these data sets were cleaned and combined into a single\
+            dataframe for this project. "], 
+                   style = dict(fontSize = '16')),
+            
+            html.Div([
+                html.H6('How It Works',
+                        style=dict(opacity=0.80,backgroundColor= 'maroon',color='white',fontSize = '20'),
+                        className = "three columns")
+            ], className = "row",style={'padding-right':'20%'}),
+            
+            html.P(["The app is intuitive. The first graph (left) visualizes the check-in count\
+            and weather indicator time series, between January 2014 and December 2018. The second graph (right)\
+            shows a scatter plot of this data (check-in count vs weather indicator), together with a linear\
+            regression to identify any trends."], style = dict(fontSize = '16')),
+            
+            html.P(["It is also simple to use.\
+            Use the drop menus to select  any business and weather indicator of your choice.\
+            Below you will find a slider which narrows/expands the time window, if you wish to focus\
+            on a particular time frame. You can also set the sampling frequency to any number of days;\
+            the sampling frequency determines the smallest time division within which the weather data is\
+            averaged and the check-in data is aggregated. For example, if sampling frequency is set\
+            to 7 days, then the check-in time series data is grouped in batches of 7 days, and so each\
+            data point in the graphs becomes the total number of check-ins within a 7 day period.\
+            You may find that the correlation between engagement and weather varies significantly with \
+            time window and sampling rate for some businesses."],
+                   style = dict(fontSize = '16')),
+            
+            html.Div([
+                html.H6('How It Really Works',
+                        style=dict(opacity=0.80,backgroundColor= 'maroon',color='white',fontSize = '20'),
+                        className = "four columns")
+            ], className = "row",style={'padding-right':'15%'}),
+            
+            html.P(["For a closer look at the code used to generate the app and other documentation\
+            feel free to check out my ",html.A("Github repository", 
+                   href='https://github.com/Tamiro2019/Business-and-Weather',
+                   target="_blank")," for this project."], style = dict(fontSize = '16')),
+
         
         ## Row 2.5 : Hidden and used for debugging
         html.Div([
             dcc.Textarea(id='my-id', value='initial value'),
         ],style={'display': 'none'}),
         
-        # Row 3 : Dropdowns to select business and weather indicator
+        ## Begin app ##
         html.Div([
+            html.H5(['Interactive App'], className = "gs-header gs-table-header padded",
+                    style = {'textAlign': 'center','fontWeight':'bold'}),
+            # Dropdowns to select business and weather indicator
             html.Div([
-                html.H6(["Select Business"], className = "gs-header gs-table-header padded",style=dict(fontSize = '20')),
-                dcc.Dropdown(
-                    id = 'b-drop',
-                    options=[{'label': i, 'value': i} for i in business_names],
-                    value=business_names[0])
-            ], className = "six columns",style={'padding-left':'3%', 'padding-right':'1%'} ), 
+                html.Div([
+                    html.H6(["Select Business"], className = "gs-header gs-table-header padded",
+                            style=dict(fontSize = '20')),
+                    dcc.Dropdown(
+                        id = 'b-drop',
+                        options=[{'label': i, 'value': i} for i in business_names],
+                        value=business_names[0])
+                ], className = "six columns",style={'padding-left':'3%', 'padding-right':'1%'} ), 
 
-            
-            
-             html.Div([
-                html.H6(["Select Weather Indicator"], className = "gs-header gs-table-header padded",style=dict(fontSize = '20')),
-                dcc.Dropdown(
-                    id = 'w-drop',
-                    options=[{'label': 'Temperature (\u00b0F)', 'value': 'T'},{'label': 'Precipitation (in)', 'value': 'P'},{'label': 'Wind Speed (mi/h)', 'value': 'WS'}],
-                    value='T') 
 
-             ], className = "six columns",style={'padding-left':'5%'}),  
-                      
-        ], className = "row padded" ),
+
+                 html.Div([
+                    html.H6(["Select Weather Indicator"], className = "gs-header gs-table-header padded",
+                            style=dict(fontSize = '20')),
+                    dcc.Dropdown(
+                        id = 'w-drop',
+                        options=[{'label': 'Temperature (\u00b0F)', 'value': 'T'},{'label': 'Precipitation (in)', 'value': 'P'},{'label': 'Wind Speed (mi/h)', 'value': 'WS'}],
+                        value='T') 
+
+                 ], className = "six columns",style={'padding-left':'5%'}),  
+
+            ], className = "row padded" ),
+
+            html.Br([]),
+            html.Br([]),
+
+            # Timetrace and Scatter plots
+            html.Div([
+                html.Div([
+                    dcc.Graph(
+                        id='timetrace',
+                        figure = timetrace(ts50),
+                        style = dict({'width': '100%'}))
+                ], className = "six columns"), 
+
+                html.Div([
+                    dcc.Graph(
+                        id='scatter',
+                        figure= BW_scatter(ts50),
+                    style = dict({'width': '100%'}))
+                ], className = "six columns"),
+
+            dcc.Loading(id="loading", children=[html.Div(id="output-1")], type="default"),
+
+            ], className = "row" ),
+
+            html.Br([]),
+            html.Br([]),
+            html.Br([]),
+
+            # Date range slider
+            html.Div([
+                html.Div([
+                    dcc.RangeSlider(
+                        id='range-slider',
+                        updatemode='mouseup',
+                        min=0,
+                        max=len(ts50.index) - 1,
+                        count=1,
+                        #step=3,
+                        value=[1*(len(ts50.index) - 1)//5, 4*(len(ts50.index) - 1)//5],
+                        marks=get_marks(ts50),
+                    )
+                ],className = "ten columns", style={'width': '96%', 'padding-left':'3%', 'padding-right':'1%'}) 
+
+            ], className = "row" ),
+
+            html.Br([]),
+            html.Br([]),
+            html.Br([]),
+
+            # Input box for date sampling frequency
+            html.Div([
+                html.Div([
+                    html.H5(["Sampling Frequency (in days) = "], className = "gs-header seven columns gs-table-header padded", style={'text-align': 'center'})
+                ]), 
+                html.Div([
+                    dcc.Input(
+                        id = 'sampling',
+                        placeholder='Frequency',
+                        type='number',
+                        value=30,
+                        debounce = True,
+                        min = 1,
+                        max = 365
+                        )  
+                ]) 
+            ], className = "row", style=dict({'padding-left':'16%','verticalAlign': 'middle'})), 
+
+            html.Br([]),
+            html.Br([]),
+        
+        ], className = "row",style={"border":"2px black solid"} ), 
+        # End app
         
         html.Br([]),
         html.Br([]),
-         
-        # Row 4 : Timetrace and Scatter plots
+        
+        # Insight Paragraphs
         html.Div([
-            html.Div([
-                dcc.Graph(
-                    id='timetrace',
-                    figure = timetrace(ts50)
-                , style = dict({'width': '100%'}))
-            ], className = "six columns"), 
+                html.H6('Insights',style=dict(opacity=0.80,backgroundColor= 'maroon',color='white',fontSize = '20'),
+                        className = "two columns")
+            ], className = "row",style={'padding-right':'10%'}),    
             
-            html.Div([
-                dcc.Graph(
-                    id='scatter',
-                    figure=  BW_scatter(ts50),
-                style = dict({'width': '100%'}))
-            ], className = "six columns"),
+        html.P("The figure below summarizes the correlation coefficients (R-squared) of all the businesses.\
+            These coefficients track the correlation between check-in count and weather over the specified\
+            period of time and sampling. They serve as a measure of the sensitivity of a business to weather\
+            conditions. There is a broad range of correlation values, which indicates that there are businesses\
+            whose engagement is highly dependent on weather, while others are much less impacted."
+            , style = dict(fontSize = '16') ),
             
-        dcc.Loading(id="loading", children=[html.Div(id="output-1")], type="default"),
-            
-        ], className = "row" ),
-        
-        # Row 4.5 - Loading Component Space
-        html.Br([]),
-        html.Br([]),
-        html.Br([]),
-        
-        # Row 5 : date range slider
-        html.Div([
-            html.Div([
-                dcc.RangeSlider(
-                    id='range-slider',
-                    updatemode='mouseup',
-                    min=0,
-                    max=len(ts50.index) - 1,
-                    count=1,
-                    #step=3,
-                    value=[1*(len(ts50.index) - 1)//5, 4*(len(ts50.index) - 1)//5],
-                    marks=get_marks(ts50),
-                )
-            ],className = "ten columns", style={'width': '96%', 'padding-left':'3%', 'padding-right':'1%'}) 
-            
-        ], className = "row" ),
+        html.P("This information can help businesses and investors identify trends and make strategic decisions.\
+            For example, leaders of highly weather-dependent businesses can manage resource allocation based on\
+            expected demand. Alternatively, weather correlations can be provide supplementary information on \
+            business performance. For instance, if a business does not expect to be impacted by weather and \
+            the data reveals otherwise, it may point to a problem that needs attention. \
+            Businesses with negligible weather correlations may also be attractive to investors who may\
+            not want seasonal variations in portfolio performance. Of course in any decision, many different \
+            variables must be considered; sensitivity to weather conditions could be an important\
+            piece of the puzzle.", 
+                style = dict(fontSize = '16') )
+        ], className = "row padded" ),    
         
         html.Br([]),
         html.Br([]),
-        html.Br([]),
-        
-        # Row 6 :  Input box for date sampling frequency
-        html.Div([
-            html.Div([
-                html.H5(["Sampling Frequency (in days) = "], className = "gs-header seven columns gs-table-header padded", style={'text-align': 'center'})
-            ]), 
-            html.Div([
-                dcc.Input(
-                    id = 'sampling',
-                    placeholder='Frequency',
-                    type='number',
-                    value=30,
-                    debounce = True,
-                    min = 1,
-                    max = 365
-                    )  
-            ]) 
-        ], className = "row", style=dict({'padding-left':'16%','verticalAlign': 'middle'})), 
-        
-        html.Br([]),
-        html.Br([]),
-        
         # Row 7: Plot bar plot for R^2 across businesses
         html.Div([
             html.H5(['Business R',
