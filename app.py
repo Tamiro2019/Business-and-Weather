@@ -265,7 +265,9 @@ app.layout = html.Div([
                         style=dict(opacity=0.80,backgroundColor= 'maroon',color='white',fontSize = '20'),
                         className = "two columns")
             ], className = "row",style={'padding-right':'10%'}),
-                
+            
+            html.Br([]),
+            
             html.P("To study consumer patterns, I built a simple app which compares business engagement \
             (as measured by check-in counts on Yelp) to different weather indicators (temperature, \
             precipitation, and wind-speed) for 50 top businesses in Pittburgh, Pennsylvania.",
@@ -276,6 +278,8 @@ app.layout = html.Div([
                         style=dict(opacity=0.80,backgroundColor= 'maroon',color='white',fontSize = '20'),
                         className = "two columns")
             ], className = "row", style={'padding-right':'10%'}),
+            
+            html.Br([]),
             
             html.P(["Business and check-in data was retrieved from the ", 
                     html.A("Yelp Open Dataset", 
@@ -301,6 +305,8 @@ app.layout = html.Div([
                         className = "three columns")
             ], className = "row",style={'padding-right':'20%'}),
             
+            html.Br([]),
+            
             html.P(["The app is intuitive. The first graph (left) visualizes the check-in count\
             and weather indicator time series, between January 2014 and December 2018. The second graph (right)\
             shows a scatter plot of this data (check-in count vs weather indicator), together with a linear\
@@ -323,6 +329,8 @@ app.layout = html.Div([
                         style=dict(opacity=0.80,backgroundColor= 'maroon',color='white',fontSize = '20'),
                         className = "four columns")
             ], className = "row",style={'padding-right':'15%'}),
+            
+            html.Br([]),
             
             html.P(["For a closer look at the code used to generate the app and other documentation\
             feel free to check out my ",html.A("Github repository", 
@@ -365,6 +373,10 @@ app.layout = html.Div([
             ], className = "row padded" ),
 
             html.Br([]),
+            html.Div([
+                    dcc.Textarea(id='b_des', value='Business Description',rows =1,readOnly='readOnly',style={'height': '80%','width': '100%','fontSize':'14'}),
+                ],style={'padding-left':'5%','padding-right':'6%'}),
+    
             html.Br([]),
 
             # Timetrace and Scatter plots
@@ -404,7 +416,7 @@ app.layout = html.Div([
                         value=[1*(len(ts50.index) - 1)//5, 4*(len(ts50.index) - 1)//5],
                         marks=get_marks(ts50),
                     )
-                ],className = "ten columns", style={'width': '96%', 'padding-left':'3%', 'padding-right':'1%'}) 
+                ],className = "ten columns", style={'width': '96%', 'padding-left':'4%', 'padding-right':'1%'}) 
 
             ], className = "row" ),
 
@@ -444,6 +456,8 @@ app.layout = html.Div([
                 html.H6('Insights',style=dict(opacity=0.80,backgroundColor= 'maroon',color='white',fontSize = '20'),
                         className = "two columns")
             ], className = "row",style={'padding-right':'10%'}),    
+            
+        html.Br([]),
             
         html.P("The figure below summarizes the correlation coefficients (R-squared) of all the businesses.\
             These coefficients track the correlation between check-in count and weather over the specified\
@@ -534,6 +548,14 @@ def update_plots(b_val,w_val,rng_vals,s_val):
 def input_triggers_spinner(value):
     time.sleep(1)
     return value          
+
+# Update business information 
+@app.callback(Output('b_des' , "value"),
+    [Input(component_id='b-drop', component_property='value')])
+def update_business(b_value):
+    b_idx = yb50[yb50['name'] == b_value].index[0]
+    output_val = b_value + ':\n - ' + yb50[yb50['name'] == b_value].loc[b_idx,'categories'] + '.'
+    return output_val    
 
 # add external css and js templates
 external_css = [ "https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css",
