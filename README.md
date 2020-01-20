@@ -30,3 +30,9 @@ dataframes to run the app. The clean data is stored in yb50.csv and ts50.csv.
 
 The yb50.csv file stores basic business information. The ts50.csv stores time series data for check-in counts 
 and weather indicators (temperature, precipitation, and wind-speed).
+
+## Launch
+
+To use the app online visit [https://business-and-weather.herokuapp.com](https://business-and-weather.herokuapp.com).
+
+To run the code directly instead, you may fork and download this repository. Setup an environment in accordance with __requirements.txt__, and you should be able to run the app.py directly (or app_notebook.ipybn with jupyter).
