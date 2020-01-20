@@ -22,9 +22,8 @@ See __requirements.txt__ for the necessary compatibility requirements.
 
 ## Key Files
 
-The app.py files contains the core code used to run the Dash app run in Heroku. 
-
-The app_notebook.ipybn contain the core code in notebook format.
+The app.py files contains the core code used to run the Dash app run in Heroku. The app_notebook.ipybn 
+contains the core code in notebook format.
 
 The Data_Cleaning.ipynb gives a step by step explanation of how the data was cleaned and assembled into condensed 
 dataframes to run the app. 
