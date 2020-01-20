@@ -1,5 +1,5 @@
 # Business-and-Weather
-Side project on correlations between business engagement and weather
+Side project on correlations between business engagement and weather.
 
 ## Overview 
 
@@ -18,16 +18,16 @@ for personal and educational purposes.
 * Plotly Dash
 * Pandas, Numpy, Scipy, Matplotlib
 
+See __requirements.txt__ for the necessary compatibility requirements.  
+
 ## Key Files
 
-The app.py and app_notebook.ipybn files contain the core code to run the Dash app run in Heroku. 
+The app.py files contains the core code used to run the Dash app run in Heroku. 
+
+The app_notebook.ipybn contain the core code in notebook format.
 
 The Data_Cleaning.ipynb gives a step by step explanation of how the data was cleaned and assembled into condensed 
 dataframes to run the app. 
 
-The yb50.csv and ts50.csv files store the data for the business identifyer and time series dataframes, respectively. 
-
-## Launch
-
-
-
+The yb50.csv file stores basic business information. The ts50.csv stores time series data for check-in counts 
+and weather indicators (temperature, precipitation, and wind-speed).
