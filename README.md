@@ -4,8 +4,8 @@ Side project on correlations between business engagement and weather.
 ## Overview 
 
 This project builds a [web app](https://business-and-weather.herokuapp.com) to visualize and analyze correlations
-between weather and costumer engagement for 50 top businesses in Pittsburgh, Pennsylvania. It uses check-in data
-from the [Yelp Dataset](https://www.yelp.com/dataset) to quantify costumer engagement, and weather data from the
+between weather and consumer engagement for 50 top businesses in Pittsburgh, Pennsylvania. It uses check-in data
+from the [Yelp Dataset](https://www.yelp.com/dataset) to quantify consumer engagement, and weather data from the
 [National Centers for Environmental Information](https://www.ncdc.noaa.gov/data-access/). The data is used here
 for personal and educational purposes. 
 
