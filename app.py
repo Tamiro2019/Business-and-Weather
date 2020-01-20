@@ -236,7 +236,8 @@ app.layout = html.Div([
 
             html.Div([      
                 html.H5('The Effect of Weather on Yelp Engagement',style=dict(fontSize = '26')),
-                html.H6('An Exploratory Analysis', style=dict(color='#7F90AC',fontSize = '20')),
+                html.H6('An Exploratory Application on 50 Top Businesses in Pittsburgh', 
+                        style=dict(color='#7F90AC',fontSize = '20')),
                 ], className = "nine columns padded" ),
 
             html.Div([            
@@ -375,7 +376,7 @@ app.layout = html.Div([
             html.Br([]),
             html.Div([
                     dcc.Textarea(id='b_des', value='Business Description',rows =1,readOnly='readOnly',style={'height': '80%','width': '100%','fontSize':'14'}),
-                ],style={'padding-left':'5%','padding-right':'6%'}),
+                ],style={'padding-left':'4%','padding-right':'4%'}),
     
             html.Br([]),
 
