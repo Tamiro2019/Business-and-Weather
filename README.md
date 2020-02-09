@@ -1,5 +1,5 @@
 # Business-and-Weather
-Side project on correlations between business engagement and weather.
+Independent project on correlations between business engagement and weather.
 
 ## Overview 
 
